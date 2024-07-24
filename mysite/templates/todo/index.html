@@ -39,17 +39,38 @@
         <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
         <script>
+            let id = 1;
+
+            function update(id) {
+                $('#text' + id).addClass('d-none');
+                $('.btn-update-delete' + id).addClass('d-none');
+                $('.input' + id).removeClass('d-none');
+                $('.div-btn-cancel' + id).removeClass('d-none');
+            }
+
+            function cancel(id) {
+                $('#text' + id).removeClass('d-none');
+                $('.btn-update-delete' + id).removeClass('d-none');
+                $('.input' + id).addClass('d-none');
+                $('.div-btn-cancel' + id).addClass('d-none');
+            }
+
             $('#btnCreate').on('click', function () {
                 // 변수 선언
                 let todoText = $('#todoText');
                 let li = '<li class="list-group-item">';
                 li += '<div class="d-flex">';
                 li += '<div class="me-auto">';
-                li += todoText.val();
+                li += '<span id="text' + id + '">' + todoText.val() + '</span>';
+                li += '<input type="text" class="form-control d-none input' + id + '" placeholder="할일 입력" name="todo_text" value="' + todoText.val() + '">';
                 li += '</div>';
-                li += '<div class="btn-group">';
-                li += '<button type="button" class="btn btn-warning btn-sm">수정</button>';
-                li += '<button type="button" class="btn btn-danger btn-sm">삭제</button>';
+                li += '<div class="btn-group btn-update-delete' + id + '">';
+                li += '<button type="button" class="btn btn-warning" onclick="update(' + id + ')">수정</button>';
+                li += '<button type="button" class="btn btn-danger" onclick="delete(' + id + ')">삭제</button>';
+                li += '</div>';
+                li += '<div class="btn-group d-none div-btn-cancel' + id + '">';
+                li += '<button type="button" class="btn btn-primary" onclick="updateConfirm(' + id + ')">확인</button>';
+                li += '<button type="button" class="btn btn-danger" onclick="cancel(' + id + ')">취소</button>';
                 li += '</div>';
                 li += '</div>';
                 li += '</li>';
@@ -59,6 +80,8 @@
 
                 // toDoText 내용 비우기
                 todoText.val('');
+
+                id++;
             });
         </script>
     </body>
