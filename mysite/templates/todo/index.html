@@ -19,11 +19,20 @@
                     할일 목록
                 </div>
                 <ul class="list-group list-group-flush">
+                    <!-- 입력 폼 -->
                     <li class="list-group-item">
-                        <a href="{% url 'todo:detail' todo.id %}">
-                            {{ todo.todo_text }}
-                        </a>
+                        <form class="row" id="formCreate">
+                            <div class="col-auto">
+                                <input type="text" class="form-control" placeholder="할일 입력" name="todo_text" id="todo_text">
+                            </div>
+                            <div class="col-auto">
+                                <button type="button" class="btn btn-primary" id="btnCreate">등록</button>
+                            </div>
+                        </form>
                     </li>
+                    <!--// 입력 폼 -->
+                    
+                    <!-- 할일 목록 -->
                     <li class="list-group-item">
                         <div class="d-flex">
                             <div class="me-auto">
@@ -37,11 +46,8 @@
                             </div>
                         </div>
                     </li>
-                    <li class="list-group-item">
-                        <a href="{% url 'todo:detail' todo.id %}">
-                            {{ todo.todo_text }}
-                        </a>
-                    </li>
+                    <!--// 할일 목록 -->
+                    
                 </ul>                    
             </div>
             <!--// content -->
