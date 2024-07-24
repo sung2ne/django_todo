@@ -18,12 +18,12 @@
                 <div class="card-header">
                     할일 목록
                 </div>
-                <ul class="list-group list-group-flush">
+                <ul class="list-group list-group-flush" id="todoList">
                     <!-- 입력 폼 -->
                     <li class="list-group-item">
                         <form class="row" id="formCreate">
                             <div class="col-auto">
-                                <input type="text" class="form-control" placeholder="할일 입력" name="todo_text" id="todo_text">
+                                <input type="text" class="form-control" placeholder="할일 입력" name="todo_text" id="todoText">
                             </div>
                             <div class="col-auto">
                                 <button type="button" class="btn btn-primary" id="btnCreate">등록</button>
@@ -32,27 +32,34 @@
                     </li>
                     <!--// 입력 폼 -->
                     
-                    <!-- 할일 목록 -->
-                    <li class="list-group-item">
-                        <div class="d-flex">
-                            <div class="me-auto">
-                                <a href="{% url 'todo:detail' todo.id %}">
-                                    {{ todo.todo_text }}
-                                </a>
-                            </div>
-                            <div>
-                                <button type="button" class="btn btn-warning btn-sm">수정</button>
-                                <button type="button" class="btn btn-danger btn-sm">삭제</button>
-                            </div>
-                        </div>
-                    </li>
-                    <!--// 할일 목록 -->
-                    
                 </ul>                    
             </div>
             <!--// content -->
         </div>
         <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+        <script>
+            $('#btnCreate').on('click', function () {
+                // 변수 선언
+                let todoText = $('#todoText');
+                let li = '<li class="list-group-item">';
+                li += '<div class="d-flex">';
+                li += '<div class="me-auto">';
+                li += todoText.val();
+                li += '</div>';
+                li += '<div class="btn-group">';
+                li += '<button type="button" class="btn btn-warning btn-sm">수정</button>';
+                li += '<button type="button" class="btn btn-danger btn-sm">삭제</button>';
+                li += '</div>';
+                li += '</div>';
+                li += '</li>';
+
+                // li를 추가
+                $('#todoList').append(li);
+
+                // toDoText 내용 비우기
+                todoText.val('');
+            });
+        </script>
     </body>
 </html>
