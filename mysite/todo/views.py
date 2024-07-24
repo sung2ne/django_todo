@@ -1,8 +1,12 @@
 from django.http import HttpResponse
+from django.template import loader
+from todo.models import Todo, Item
 
 # 할일 목록, /todo/
 def index(request):
-    return HttpResponse("todo, index")
+    template = loader.get_template('todo/index.html')
+    context = {}
+    return HttpResponse(template.render(context, request))
 
 # 할일 등록, /todo/create/
 def todoCreate(request):
@@ -12,7 +16,7 @@ def todoCreate(request):
 def todoDetail(request):
     return HttpResponse("todo, detail")
 
-# 할일 수정, /todo/<todo_id>/update/ 
+# 할일 수정, /todo/<todo_id>/update/
 def todoUpdate(request):
     return HttpResponse("todo, update")
 
