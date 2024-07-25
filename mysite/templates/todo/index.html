@@ -27,7 +27,30 @@
 
 {% block script %}
 <script>
-    let id = 1;
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    const csrftoken = getCookie('csrftoken');
+
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
 
     function update(id) {
         $('#text' + id).addClass('d-none');
@@ -49,33 +72,52 @@
         let todoText = $('#todoText');
 
         // 입력 내용 확인
-        if () {
-
+        if (todoText.val() == '') {
+            alert('할일을 입력하세요.');
+            todoText.focus();
         } else {
-            let li = '<li class="list-group-item">';
-                li += '<div class="d-flex">';
-                li += '<div class="me-auto">';
-                li += '<span id="text' + id + '">' + todoText.val() + '</span>';
-                li += '<input type="text" class="form-control d-none input' + id + '" placeholder="할일 입력" name="todo_text" value="' + todoText.val() + '">';
-                li += '</div>';
-                li += '<div class="btn-group btn-update-delete' + id + '">';
-                li += '<button type="button" class="btn btn-warning" onclick="update(' + id + ')">수정</button>';
-                li += '<button type="button" class="btn btn-danger" onclick="delete(' + id + ')">삭제</button>';
-                li += '</div>';
-                li += '<div class="btn-group d-none div-btn-cancel' + id + '">';
-                li += '<button type="button" class="btn btn-primary" onclick="updateConfirm(' + id + ')">확인</button>';
-                li += '<button type="button" class="btn btn-danger" onclick="cancel(' + id + ')">취소</button>';
-                li += '</div>';
-                li += '</div>';
-                li += '</li>';
-        
-                // li를 추가
-                $('#todoList').append(li);
-        
-                // toDoText 내용 비우기
-                todoText.val('');
-        
-                id++;
+            // todoText.val()를 /todo/create/로 보내기
+            $.ajax({
+                url: '/todo/create/',
+                type: 'post',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: {
+                    'todo_text': todoText.val(),
+                },
+                complete: function (xhr, status) {
+                    // toDoText 내용 비우기
+                    todoText.val('');
+                },
+                success: function (response) {
+                    console.log(response);
+                    let id = response.id;
+
+                    // 추가한 할일을 li로 만들어서 ul에 추가
+                    let li = '<li class="list-group-item">';
+                        li += '<div class="d-flex">';
+                        li += '<div class="me-auto">';
+                        li += '<span id="text' + id + '">' + todoText.val() + '</span>';
+                        li += '<input type="text" class="form-control d-none input' + id + '" placeholder="할일 입력" name="todo_text" value="' + todoText.val() + '">';
+                        li += '</div>';
+                        li += '<div class="btn-group btn-update-delete' + id + '">';
+                        li += '<button type="button" class="btn btn-warning" onclick="update(' + id + ')">수정</button>';
+                        li += '<button type="button" class="btn btn-danger" onclick="delete(' + id + ')">삭제</button>';
+                        li += '</div>';
+                        li += '<div class="btn-group d-none div-btn-cancel' + id + '">';
+                        li += '<button type="button" class="btn btn-primary" onclick="updateConfirm(' + id + ')">확인</button>';
+                        li += '<button type="button" class="btn btn-danger" onclick="cancel(' + id + ')">취소</button>';
+                        li += '</div>';
+                        li += '</div>';
+                        li += '</li>';
+                
+                        // li를 추가
+                        $('#todoList').append(li);
+                },
+                error: function () {
+                    alert('오류');
+                },
+            });
         }
     });
 </script>

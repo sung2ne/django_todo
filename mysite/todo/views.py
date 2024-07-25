@@ -11,7 +11,7 @@ def index(request):
 def todoCreate(request):
     if request.method == "POST":
         # 받은 값
-        todo_text = request.POST["todo_text"]
+        todo_text = request.POST.get("todo_text")
         print(todo_text)
         
         # 데이터베이스에 할일 추가하기
