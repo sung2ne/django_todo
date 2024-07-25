@@ -1,16 +1,23 @@
-from django.http import HttpResponse
-from django.template import loader
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render
 from todo.models import Todo, Item
 
 # 할일 목록, /todo/
 def index(request):
-    template = loader.get_template('todo/index.html')
     context = {}
-    return HttpResponse(template.render(context, request))
+    return render(request, "todo/index.html", context)
 
 # 할일 등록, /todo/create/
 def todoCreate(request):
-    return HttpResponse("todo, create")
+    if request.method == "POST":
+        # 받은 값
+        todo_text = request.POST["todo_text"]
+        print(todo_text)
+        
+        # 데이터베이스에 할일 추가하기
+        
+    # JSON 응답
+    return JsonResponse({"id": 1}, status=200)
 
 # 할일 보기, /todo/<todo_id>/
 def todoDetail(request):
