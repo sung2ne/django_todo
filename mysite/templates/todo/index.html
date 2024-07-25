@@ -23,7 +23,7 @@
         <!-- 할일 목록 -->
         {% if todoList %}
             {% for todo in todoList %}
-                <li class="list-group-item">
+                <li class="list-group-item" id="li{{ todo.id }}">
                     <div class="d-flex">
                         <div class="me-auto">
                             <span id="spanText{{ todo.id }}" class="span-todo-text">{{ todo.todo_text }}</span>
@@ -31,7 +31,7 @@
                         </div>
                         <div class="btn-group btn-update-delete{{ todo.id }}">
                             <button type="button" class="btn btn-warning" onclick="update({{ todo.id }})">수정</button>
-                            <button type="button" class="btn btn-danger" onclick="delete({{ todo.id }})">삭제</button>
+                            <button type="button" class="btn btn-danger" onclick="deleteConfirm({{ todo.id }})">삭제</button>
                         </div>
                         <div class="btn-group d-none div-btn-cancel{{ todo.id }}">
                             <button type="button" class="btn btn-primary" onclick="updateConfirm({{ todo.id }})">확인</button>
@@ -105,7 +105,7 @@
                     let todo_text = response.todo_text;
 
                     // 추가한 할일을 li로 만들어서 ul에 추가
-                    let li = '<li class="list-group-item">';
+                    let li = '<li class="list-group-item" id="li' + id + '">';
                         li += '<div class="d-flex">';
                         li += '<div class="me-auto">';
                         li += '<span id="spanText' + id + '" class="span-todo-text">' + todo_text + '</span>';
@@ -113,7 +113,7 @@
                         li += '</div>';
                         li += '<div class="btn-group btn-update-delete' + id + '">';
                         li += '<button type="button" class="btn btn-warning" onclick="update(' + id + ')">수정</button>';
-                        li += '<button type="button" class="btn btn-danger" onclick="delete(' + id + ')">삭제</button>';
+                        li += '<button type="button" class="btn btn-danger" onclick="deleteConfirm(' + id + ')">삭제</button>';
                         li += '</div>';
                         li += '<div class="btn-group d-none div-btn-cancel' + id + '">';
                         li += '<button type="button" class="btn btn-primary" onclick="updateConfirm(' + id + ')">확인</button>';
@@ -209,8 +209,48 @@
         }
     }
 
+    // 수정 취소
     function cancel(id) {
-        
+        // .span-todo-text는 전부 보이기
+        $('.span-todo-text' ).removeClass('d-none');
+
+        // .input-todo-text는 전부 숨기기
+        $('.input-todo-text' ).addClass('d-none');
+
+        // 수정, 삭제 버튼 숨기기
+        $('.btn-update-delete' + id).removeClass('d-none');
+
+        // 확인, 취소 버튼 보이기
+        $('.div-btn-cancel' + id).addClass('d-none');
+    }
+
+    // 삭제
+    function deleteConfirm(id) {
+        if (confirm('정말로 삭제하시겠습니까?')) {
+            // todoText.val()를 /todo/<todo_id>/delete/ 로 보내기
+            $.ajax({
+                url: '/todo/' + id + '/delete/',
+                type: 'post',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify({}),
+                success: function (response) {
+                    // .span-todo-text는 전부 보이기
+                    $('.span-todo-text' ).removeClass('d-none');
+
+                    // .input-todo-text는 전부 숨기기
+                    $('.input-todo-text' ).addClass('d-none');
+
+                    // 할일 삭제하기
+                    $('#li' + id).remove();
+                },
+                error: function () {
+                    alert('오류');
+                },
+            });
+        } else {
+            return;
+        }
     }
 </script>
 {% endblock %}
