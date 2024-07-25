@@ -2,5 +2,16 @@
  
 장고를 이용한 할일 관리 애플리케이션
 
-## 2024-07-24
-- [x] - 로그인 기능 추가
+## 데이터베이스 마이그레이션
+
+### makemigrations
+
+```bash
+python manage.py makemigrations
+```
+
+### migrate
+
+```bash
+python manage.py migrate
+```

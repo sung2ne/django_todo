@@ -76,15 +76,17 @@
             alert('할일을 입력하세요.');
             todoText.focus();
         } else {
+            let data = JSON.stringify({
+                'todo_text': todoText.val(),
+            });
+
             // todoText.val()를 /todo/create/로 보내기
             $.ajax({
                 url: '/todo/create/',
                 type: 'post',
                 dataType: 'json',
                 contentType: 'application/json',
-                data: {
-                    'todo_text': todoText.val(),
-                },
+                data: data,
                 complete: function (xhr, status) {
                     // toDoText 내용 비우기
                     todoText.val('');

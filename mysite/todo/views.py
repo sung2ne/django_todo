@@ -1,3 +1,4 @@
+import json
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from todo.models import Todo, Item
@@ -11,13 +12,17 @@ def index(request):
 def todoCreate(request):
     if request.method == "POST":
         # 받은 값
-        todo_text = request.POST.get("todo_text")
-        print(todo_text)
+        body = json.loads(request.body)
+        todo_text = body.get('todo_text')
         
         # 데이터베이스에 할일 추가하기
+        Todo.objects.create(todo_text=todo_text)
+        
+        # Todo에서 마지막 데이터 가져오기
+        todo = Todo.objects.order_by("-id").last()
         
     # JSON 응답
-    return JsonResponse({"id": 1}, status=200)
+    return JsonResponse({"id": todo.id, "todo_text": todo.todo_text}, status=200)
 
 # 할일 보기, /todo/<todo_id>/
 def todoDetail(request):
