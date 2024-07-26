@@ -4,14 +4,14 @@
 <!-- content -->
 <div class="card col-md-4">
     <div class="card-header">
-        할일 목록
+        상세 항목 목록 - {{ todo.todo_text }}
     </div>
-    <ul class="list-group list-group-flush" id="todoList">
+    <ul class="list-group list-group-flush" id="itemList">
         <!-- 입력 폼 -->
         <li class="list-group-item">
             <form class="row" id="formCreate">
                 <div class="col-auto">
-                    <input type="text" class="form-control" placeholder="할일 입력" name="todo_text" id="todoText">
+                    <input type="text" class="form-control" placeholder="상세 항목 입력" name="item_text" id="itemText">
                 </div>
                 <div class="col-auto">
                     <button type="button" class="btn btn-primary" id="btnCreate">등록</button>
@@ -20,32 +20,30 @@
         </li>
         <!--// 입력 폼 -->
         
-        <!-- 할일 목록 -->
-        {% if todoList %}
-            {% for todo in todoList %}
-                <li class="list-group-item" id="li{{ todo.id }}">
+        <!-- 상세 항목 목록 -->
+        {% if todo.item_set.all %}
+            {% for item in todo.item_set.all %}
+                <li class="list-group-item" id="li{{ item.id }}">
                     <div class="d-flex">
                         <div class="me-auto">
-                            <span id="spanText{{ todo.id }}" class="span-todo-text">
-                                <a href="/todo/{{ todo.id }}/">{{ todo.todo_text }}</a>
-                            </span>
-                            <input type="text" class="form-control d-none input-text{{ todo.id }} input-todo-text" placeholder="할일 입력" name="todo_text" value="{{ todo.todo_text }}">
+                            <span id="spanText{{ item.id }}" class="span-item-text">{{ item.item_text }}</span>
+                            <input type="text" class="form-control d-none input-text{{ item.id }} input-item-text" placeholder="상세 항목 입력" name="item_text" value="{{ item.item_text }}">
                         </div>
-                        <div class="btn-group btn-update-delete{{ todo.id }}">
-                            <button type="button" class="btn btn-warning" onclick="update({{ todo.id }})">수정</button>
-                            <button type="button" class="btn btn-danger" onclick="deleteConfirm({{ todo.id }})">삭제</button>
+                        <div class="btn-group btn-update-delete{{ item.id }}">
+                            <button type="button" class="btn btn-warning" onclick="update({{ item.id }})">수정</button>
+                            <button type="button" class="btn btn-danger" onclick="deleteConfirm({{ item.id }})">삭제</button>
                         </div>
-                        <div class="btn-group d-none div-btn-cancel{{ todo.id }}">
-                            <button type="button" class="btn btn-primary" onclick="updateConfirm({{ todo.id }})">확인</button>
-                            <button type="button" class="btn btn-danger" onclick="cancel({{ todo.id }})">취소</button>
+                        <div class="btn-group d-none div-btn-cancel{{ item.id }}">
+                            <button type="button" class="btn btn-primary" onclick="updateConfirm({{ item.id }})">확인</button>
+                            <button type="button" class="btn btn-danger" onclick="cancel({{ item.id }})">취소</button>
                         </div>
                     </div>
                 </li>
             {% endfor %}
         {% endif %}
-        <!--// 할일 목록 -->                
+        <!--// 상세 항목 목록 -->                
         
-    </ul>                    
+    </ul>             
 </div>
 <!--// content -->
 {% endblock %}
@@ -83,36 +81,34 @@
     // 등록
     $('#btnCreate').on('click', function () {
         // 변수 선언
-        let todoText = $('#todoText');
+        let itemText = $('#itemText');
 
         // 입력 내용 확인
-        if (todoText.val() == '') {
-            alert('할일을 입력하세요.');
-            todoText.focus();
+        if (itemText.val() == '') {
+            alert('상세 항목을 입력하세요.');
+            itemText.focus();
         } else {
             let data = JSON.stringify({
-                'todo_text': todoText.val(),
+                'item_text': itemText.val(),
             });
 
-            // todoText.val()를 /todo/create/로 보내기
+            // itemText.val()를 /todo/<todo_id>/create/로 보내기
             $.ajax({
-                url: '/todo/create/',
+                url: '/todo/{{ todo.id }}/create/',
                 type: 'post',
                 dataType: 'json',
                 contentType: 'application/json',
                 data: data,
                 success: function (response) {
                     let id = response.id;
-                    let todo_text = response.todo_text;
+                    let item_text = response.item_text;
 
-                    // 추가한 할일을 li로 만들어서 ul에 추가
+                    // 추가한 상세 항목을 li로 만들어서 ul에 추가
                     let li = '<li class="list-group-item" id="li' + id + '">';
                         li += '<div class="d-flex">';
                         li += '<div class="me-auto">';
-                        li +='<span id="spanText' + id + '" class="span-todo-text">';
-                        li +='<a href="/todo/' + id + '/">' + todo_text + '</a>';
-                        li +='</span>';
-                        li += '<input type="text" class="form-control d-none input-text' + id + ' input-todo-text" placeholder="할일 입력" name="todo_text" value="' + todoText.val() + '">';
+                        li +='<span id="spanText' + id + '" class="span-item-text">' + item_text + '</span>';
+                        li += '<input type="text" class="form-control d-none input-text' + id + ' input-todo-text" placeholder="상세 항목 입력" name="item_text" value="' + itemText.val() + '">';
                         li += '</div>';
                         li += '<div class="btn-group btn-update-delete' + id + '">';
                         li += '<button type="button" class="btn btn-warning" onclick="update(' + id + ')">수정</button>';
@@ -126,16 +122,16 @@
                         li += '</li>';
                 
                     // li를 추가
-                    $('#todoList').append(li);
+                    $('#itemList').append(li);
 
-                    // toDoText 내용 비우기
-                    todoText.val('');
+                    // itemText 내용 비우기
+                    itemText.val('');
 
-                    // .span-todo-text는 전부 보이기
-                    $('.span-todo-text' ).removeClass('d-none');
+                    // .span-item-text는 전부 보이기
+                    $('.span-item-text' ).removeClass('d-none');
 
-                    // .input-todo-text는 전부 숨기기
-                    $('.input-todo-text' ).addClass('d-none');
+                    // .input-item-text는 전부 숨기기
+                    $('.input-item-text' ).addClass('d-none');
                 },
                 error: function () {
                     alert('오류');
@@ -146,11 +142,11 @@
 
     // 수정
     function update(id) {
-        // .span-todo-text는 전부 보이기
-        $('.span-todo-text' ).removeClass('d-none');
+        // .span-item-text는 전부 보이기
+        $('.span-item-text' ).removeClass('d-none');
 
-        // .input-todo-text는 전부 숨기기
-        $('.input-todo-text' ).addClass('d-none');
+        // .input-item-text는 전부 숨기기
+        $('.input-item-text' ).addClass('d-none');
 
         // id에 해당하는 span태그를 숨기기
         $('#spanText' + id).addClass('d-none');
@@ -168,36 +164,36 @@
     // 수정 확인
     function updateConfirm(id) {
         // 변수 선언
-        let todoText = $('.input-text' + id);
+        let itemText = $('.input-text' + id);
 
         // 입력 내용 확인
-        if (todoText.val() == '') {
-            alert('할일을 입력하세요.');
-            todoText.focus();
+        if (itemText.val() == '') {
+            alert('상세 항목을 입력하세요.');
+            itemText.focus();
         } else {
             let data = JSON.stringify({
-                'todo_text': todoText.val(),
+                'item_text': itemText.val(),
             });
 
-            // todoText.val()를 /todo/<todo_id>/update/ 로 보내기
+            // itemText.val()를 /todo/<todo_id>/<item_id>/update/ 로 보내기
             $.ajax({
-                url: '/todo/' + id + '/update/',
+                url: '/todo/{{ todo.id }}/' + id + '/update/',
                 type: 'post',
                 dataType: 'json',
                 contentType: 'application/json',
                 data: data,
                 success: function (response) {
                     let id = response.id;
-                    let todo_text = response.todo_text;
+                    let item_text = response.item_text;
 
                     // 수정한 할일 내용으로 바꿔주기
-                    $('#spanText' + id).text(todo_text);
+                    $('#spanText' + id).text(item_text);
 
-                    // .span-todo-text는 전부 보이기
-                    $('.span-todo-text' ).removeClass('d-none');
+                    // .span-item-text는 전부 보이기
+                    $('.span-item-text' ).removeClass('d-none');
 
-                    // .input-todo-text는 전부 숨기기
-                    $('.input-todo-text' ).addClass('d-none');
+                    // .input-item-text는 전부 숨기기
+                    $('.input-item-text' ).addClass('d-none');
 
                     // 수정, 삭제 버튼 숨기기
                     $('.btn-update-delete' + id).removeClass('d-none');
@@ -214,11 +210,11 @@
 
     // 수정 취소
     function cancel(id) {
-        // .span-todo-text는 전부 보이기
-        $('.span-todo-text' ).removeClass('d-none');
+        // .span-item-text는 전부 보이기
+        $('.span-item-text' ).removeClass('d-none');
 
-        // .input-todo-text는 전부 숨기기
-        $('.input-todo-text' ).addClass('d-none');
+        // .input-item-text는 전부 숨기기
+        $('.input-item-text' ).addClass('d-none');
 
         // 수정, 삭제 버튼 숨기기
         $('.btn-update-delete' + id).removeClass('d-none');
@@ -230,21 +226,21 @@
     // 삭제
     function deleteConfirm(id) {
         if (confirm('정말로 삭제하시겠습니까?')) {
-            // todoText.val()를 /todo/<todo_id>/delete/ 로 보내기
+            // /todo/<todo_id>/<item_id>/delete/ 로 보내기
             $.ajax({
-                url: '/todo/' + id + '/delete/',
+                url: '/todo/{{ todo.id }}/' + id + '/delete/',
                 type: 'post',
                 dataType: 'json',
                 contentType: 'application/json',
                 data: JSON.stringify({}),
                 success: function (response) {
-                    // .span-todo-text는 전부 보이기
-                    $('.span-todo-text' ).removeClass('d-none');
+                    // .span-item-text는 전부 보이기
+                    $('.span-item-text' ).removeClass('d-none');
 
-                    // .input-todo-text는 전부 숨기기
-                    $('.input-todo-text' ).addClass('d-none');
+                    // .input-item-text는 전부 숨기기
+                    $('.input-item-text' ).addClass('d-none');
 
-                    // 할일 삭제하기
+                    // 상세 항목 삭제하기
                     $('#li' + id).remove();
                 },
                 error: function () {

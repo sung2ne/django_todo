@@ -87,7 +87,7 @@ def itemUpdate(request, todo_id, item_id):
         item_text = body.get('item_text')
         
         # 기존 상세 항목 정보
-        item = get_object_or_404(Todo, pk=item_id)
+        item = get_object_or_404(Item, pk=item_id)
         
         # 상세 항목 수정
         item.item_text = item_text
