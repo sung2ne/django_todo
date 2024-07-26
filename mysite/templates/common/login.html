@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form id="loginForm">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label for="username" class="form-label">Username</label>
+      <input type="text" class="form-control" id="username" name="username">
+    </div>
+    <div class="mb-3">
+      <label for="password" class="form-label">Password</label>
+      <input type="password" class="form-control" id="password" name="password">
+    </div>
+    <button type="submit" class="btn btn-primary">로그인</button>
+</form>
+{% endblock %}
+
+{% block script %}
+<script>
+    $('#loginForm').on('submit', function() {
+        let username = $('#username');
+        let password = $('#password');
+
+        if (username.val() == '') {
+            alert('username을 입력하세요.');
+            username.focus();
+            return false;
+        } else if (password.val() == '') {
+            alert('password를 입력하세요.');
+            password.focus();
+            return false;
+        } else {
+            $('#loginForm').attr('action', '/common/login/');
+            $('#loginForm').attr('method', 'post');
+            $('#loginForm').submit();
+        }
+    });
+</script>
+{% endblock %}
