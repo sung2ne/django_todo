@@ -20,3 +20,24 @@ def common_login(request):
     else:
         context = {}
         return render(request, "common/login.html", context)
+    
+# 프로필, /common/profile/
+def common_profile(request):
+    if request.method == "POST":
+        email = request.POST["email"]
+        last_name = request.POST["last_name"]
+        request.user.email = email
+        request.user.last_name = last_name
+        request.user.save()
+        return redirect("common:profile")
+    else:
+        context = {}
+        return render(request, "common/profile.html", context)
+    
+# 비밀번호, /common/password/
+def common_password(request):
+    if request.method == "POST":
+        password = request.POST["password"]
+        request.user.set_password(password)
+        request.user.save()
+        return redirect("common:profile")

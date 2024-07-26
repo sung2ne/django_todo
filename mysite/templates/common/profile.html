@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    
+    <!-- 프로필 -->
+    <div class="col-auto">
+        <form id="profileForm">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="email" class="form-label">email</label>
+              <input type="email" class="form-control" id="email" name="email">
+            </div>
+            <div class="mb-3">
+              <label for="last_name" class="form-label">name</label>
+              <input type="text" class="form-control" id="last_name" name="last_name">
+            </div>
+            <button type="submit" class="btn btn-primary">프로필 수정</button>
+        </form>
+    </div>
+    <!--// 프로필 -->
+
+    <!-- 비밀번호 -->
+    <div class="col-auto">
+        <form id="passwordForm">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="password" class="form-label">비밀번호</label>
+              <input type="password" class="form-control" id="password" name="password">
+            </div>
+            <div class="mb-3">
+              <label for="password2" class="form-label">비밀번호 확인</label>
+              <input type="password" class="form-control" id="password2" name="password2">
+            </div>
+            <button type="submit" class="btn btn-primary">비밀번호 수정</button>
+        </form>
+    </div>
+    <!--// 비밀번호 -->
+
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    $('#loginForm').on('submit', function() {
+        let username = $('#username');
+        let password = $('#password');
+
+        if (username.val() == '') {
+            alert('username을 입력하세요.');
+            username.focus();
+            return false;
+        } else if (password.val() == '') {
+            alert('password를 입력하세요.');
+            password.focus();
+            return false;
+        } else {
+            $('#loginForm').attr('action', '/common/login/');
+            $('#loginForm').attr('method', 'post');
+            $('#loginForm').submit();
+        }
+    });
+</script>
+{% endblock %}

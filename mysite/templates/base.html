@@ -19,11 +19,26 @@
             <div class="container-fluid">
                 <a class="navbar-brand" href="#">Todo</a>
                 <div class="d-flex">
-                    {% if user.is_authenticated %}
-                        {{ user }}님 반갑습니다. <a href="/common/logout/">로그아웃</a>
-                    {% else %}
-                        <a href="/common/login/">로그인</a>
-                    {% endif %}
+                    <div class="collapse navbar-collapse">
+                        <ul class="navbar-nav">
+                            {% if user.is_authenticated %}
+                            <li class="nav-item" style="margin-right: 20px;">
+                                {{ user }}님 반갑습니다.
+                            </li>
+                            <li class="nav-item" style="margin-right: 20px;">
+                                <a href="/common/profile/">프로필</a>
+                            </li>
+                            {% endif %}
+                            <li class="nav-item">
+                                {% if user.is_authenticated %}
+                                    <a href="/common/logout/">로그아웃</a>
+                                {% else %}
+                                    <a href="/common/login/">로그인</a>
+                                {% endif %}
+                            </li>
+                        </ul>
+                    </div>
+                    
                 </div>
             </div>
         </nav>
