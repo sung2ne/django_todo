@@ -9,11 +9,11 @@
             {% csrf_token %}
             <div class="mb-3">
               <label for="email" class="form-label">email</label>
-              <input type="email" class="form-control" id="email" name="email">
+              <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}">
             </div>
             <div class="mb-3">
               <label for="last_name" class="form-label">name</label>
-              <input type="text" class="form-control" id="last_name" name="last_name">
+              <input type="text" class="form-control" id="last_name" name="last_name" value="{{ user.last_name }}">
             </div>
             <button type="submit" class="btn btn-primary">프로필 수정</button>
         </form>
@@ -42,22 +42,45 @@
 
 {% block script %}
 <script>
-    $('#loginForm').on('submit', function() {
-        let username = $('#username');
-        let password = $('#password');
+    $('#profileForm').on('submit', function() {
+        let email = $('#email');
+        let last_name = $('#last_name');
 
-        if (username.val() == '') {
-            alert('username을 입력하세요.');
-            username.focus();
+        if (email.val() == '') {
+            alert('이메일을 입력하세요.');
+            email.focus();
             return false;
-        } else if (password.val() == '') {
-            alert('password를 입력하세요.');
+        } else if (last_name.val() == '') {
+            alert('이름을 입력하세요.');
+            last_name.focus();
+            return false;
+        } else {
+            $('#profileForm').attr('action', '/common/profile/');
+            $('#profileForm').attr('method', 'post');
+            $('#profileForm').submit();
+        }
+    });
+
+    $('#passwordForm').on('submit', function() {
+        let password = $('#password');
+        let password2 = $('#password2');
+
+        if (password.val() == '') {
+            alert('비밀번호를 입력하세요.');
+            password.focus();
+            return false;
+        } else if (password2.val() == '') {
+            alert('비밀번호 확인을 입력하세요.');
+            password2.focus();
+            return false;
+        } else if (password.val() != password2.val()) {
+            alert('비밀번호와 비밀번호 확인이 다릅니다.');
             password.focus();
             return false;
         } else {
-            $('#loginForm').attr('action', '/common/login/');
-            $('#loginForm').attr('method', 'post');
-            $('#loginForm').submit();
+            $('#passwordForm').attr('action', '/common/password/');
+            $('#passwordForm').attr('method', 'post');
+            $('#passwordForm').submit();
         }
     });
 </script>
