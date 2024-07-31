@@ -23,6 +23,7 @@
         <!-- 할일 목록 -->
         {% if todoList %}
             {% for todo in todoList %}
+                {% if todo.hidden == 'N' %}
                 <li class="list-group-item" id="li{{ todo.id }}">
                     <div class="d-flex">
                         <div class="me-auto">
@@ -32,6 +33,7 @@
                             <input type="text" class="form-control d-none input-text{{ todo.id }} input-todo-text" placeholder="할일 입력" name="todo_text" value="{{ todo.todo_text }}">
                         </div>
                         {% if todo.author.id == user.id %}
+                        <button type="button" class="btn btn-danger hidden-button-{{ todo.id }}" style="margin-right: 20px;" onclick="hiddenConfirm({{ todo.id }})">숨기기</button>
                         <div class="btn-group btn-update-delete{{ todo.id }}">
                             <button type="button" class="btn btn-warning" onclick="update({{ todo.id }})">수정</button>
                             <button type="button" class="btn btn-danger" onclick="deleteConfirm({{ todo.id }})">삭제</button>
@@ -43,6 +45,7 @@
                         {% endif %}
                     </div>
                 </li>
+                {% endif %}
             {% endfor %}
         {% endif %}
         <!--// 할일 목록 -->                
@@ -81,6 +84,34 @@
             }
         }
     });
+
+    // 숨기기/보이기
+    function hiddenConfirm(id) {
+        let todo_hidden = $('.hidden-button-' + id).text() == '숨기기' ? 'N' : 'Y';
+
+        let data = JSON.stringify({
+            'todo_hidden': todo_hidden,
+        });
+
+        // todoText.val()를 /todo/<todo_id>/update/ 로 보내기
+        $.ajax({
+            url: '/todo/' + id + '/update/',
+            type: 'post',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: data,
+            success: function (response) {
+                if (todo_hidden == 'N') {
+                    $('.hidden-button-' + id).removeClass('btn-danger').addClass('btn-primary').text('보이기');
+                } else {
+                    $('.hidden-button-' + id).removeClass('btn-primary').addClass('btn-danger').text('숨기기');
+                }
+            },
+            error: function () {
+                alert('오류');
+            },
+        });        
+    }
 
     // 등록
     $('#btnCreate').on('click', function () {

@@ -55,12 +55,17 @@ def todoUpdate(request, todo_id):
         # 받은 값
         body = json.loads(request.body)
         todo_text = body.get('todo_text')
+        todo_hidden = body.get('todo_hidden')
         
         # 기존 할일 정보
         todo = get_object_or_404(Todo, pk=todo_id)
         
         # 할일 수정
-        todo.todo_text = todo_text
+        if todo_text:
+            todo.todo_text = todo_text
+        else:
+            todo.hidden = todo_hidden
+            
         todo.save()
         
     # JSON 응답
