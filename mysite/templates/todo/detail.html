@@ -7,6 +7,7 @@
         상세 항목 목록 - {{ todo.todo_text }}
     </div>
     <ul class="list-group list-group-flush" id="itemList">
+        {% if todo.author.id == user.id %}
         <!-- 입력 폼 -->
         <li class="list-group-item">
             <form class="row" id="formCreate">
@@ -19,6 +20,7 @@
             </form>
         </li>
         <!--// 입력 폼 -->
+        {% endif %}
         
         <!-- 상세 항목 목록 -->
         {% if todo.item_set.all %}
@@ -29,6 +31,7 @@
                             <span id="spanText{{ item.id }}" class="span-item-text">{{ item.item_text }}</span>
                             <input type="text" class="form-control d-none input-text{{ item.id }} input-item-text" placeholder="상세 항목 입력" name="item_text" value="{{ item.item_text }}">
                         </div>
+                        {% if item.author.id == user.id %}
                         <div class="btn-group btn-update-delete{{ item.id }}">
                             <button type="button" class="btn btn-warning" onclick="update({{ item.id }})">수정</button>
                             <button type="button" class="btn btn-danger" onclick="deleteConfirm({{ item.id }})">삭제</button>
@@ -37,6 +40,7 @@
                             <button type="button" class="btn btn-primary" onclick="updateConfirm({{ item.id }})">확인</button>
                             <button type="button" class="btn btn-danger" onclick="cancel({{ item.id }})">취소</button>
                         </div>
+                        {% endif %}
                     </div>
                 </li>
             {% endfor %}
