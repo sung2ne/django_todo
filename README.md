@@ -38,3 +38,9 @@ $ django_todo/mysite> python manage.py migrate
 ```bash
 $ django_todo/mysite> python manage.py runserver
 ```
+
+## 할일 보이기/숨기기 기능 추가
+1. todo 테이블에 hidden 칼럼 추가
+2. url 추가 /todo/<todo_id>/hidden/
+3. view 추가 def hidden()
+4. index.html 수정
