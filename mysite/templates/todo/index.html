@@ -27,10 +27,11 @@
                     <div class="d-flex">
                         <div class="me-auto">
                             <span id="spanText{{ todo.id }}" class="span-todo-text">
-                                <a href="/todo/{{ todo.id }}/">{{ todo.todo_text }}</a>
+                                [{{ todo.author.username }}] <a href="/todo/{{ todo.id }}/">{{ todo.todo_text }}</a>
                             </span>
                             <input type="text" class="form-control d-none input-text{{ todo.id }} input-todo-text" placeholder="할일 입력" name="todo_text" value="{{ todo.todo_text }}">
                         </div>
+                        {% if todo.author.id == user.id %}
                         <div class="btn-group btn-update-delete{{ todo.id }}">
                             <button type="button" class="btn btn-warning" onclick="update({{ todo.id }})">수정</button>
                             <button type="button" class="btn btn-danger" onclick="deleteConfirm({{ todo.id }})">삭제</button>
@@ -39,6 +40,7 @@
                             <button type="button" class="btn btn-primary" onclick="updateConfirm({{ todo.id }})">확인</button>
                             <button type="button" class="btn btn-danger" onclick="cancel({{ todo.id }})">취소</button>
                         </div>
+                        {% endif %}
                     </div>
                 </li>
             {% endfor %}
@@ -102,15 +104,17 @@
                 contentType: 'application/json',
                 data: data,
                 success: function (response) {
+                    console.log(response)
                     let id = response.id;
                     let todo_text = response.todo_text;
+                    let username = response.username;
 
                     // 추가한 할일을 li로 만들어서 ul에 추가
                     let li = '<li class="list-group-item" id="li' + id + '">';
                         li += '<div class="d-flex">';
                         li += '<div class="me-auto">';
                         li +='<span id="spanText' + id + '" class="span-todo-text">';
-                        li +='<a href="/todo/' + id + '/">' + todo_text + '</a>';
+                        li +='[' + username + '] <a href="/todo/' + id + '/">' + todo_text + '</a>';
                         li +='</span>';
                         li += '<input type="text" class="form-control d-none input-text' + id + ' input-todo-text" placeholder="할일 입력" name="todo_text" value="' + todoText.val() + '">';
                         li += '</div>';

@@ -1,5 +1,6 @@
 from django.contrib.auth import logout, authenticate, login
 from django.shortcuts import redirect, render
+from django.contrib.auth.decorators import login_required
 
 # 로그아웃, /common/logout/
 def common_logout(request):
@@ -22,6 +23,7 @@ def common_login(request):
         return render(request, "common/login.html", context)
     
 # 프로필, /common/profile/
+@login_required
 def common_profile(request):
     if request.method == "POST":
         email = request.POST["email"]
@@ -35,6 +37,7 @@ def common_profile(request):
         return render(request, "common/profile.html", context)
     
 # 비밀번호, /common/password/
+@login_required
 def common_password(request):
     if request.method == "POST":
         password = request.POST["password"]

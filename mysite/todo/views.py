@@ -2,10 +2,13 @@ import json
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from todo.models import Todo, Item
+from django.contrib.auth.decorators import login_required
 
 # 할일 목록, /todo/
+@login_required
 def index(request):
     # 할일 목록
+    # todoList = Todo.objects.filter(author=request.user.id).order_by('id')
     todoList = Todo.objects.order_by('id')
 
     # 전달 내용
@@ -17,6 +20,7 @@ def index(request):
     return render(request, "todo/index.html", context)
 
 # 할일 등록, /todo/create/
+@login_required
 def todoCreate(request):
     if request.method == "POST":
         # 받은 값
@@ -24,12 +28,19 @@ def todoCreate(request):
         todo_text = body.get('todo_text')
         
         # 데이터베이스에 할일 추가하기
-        todo = Todo.objects.create(todo_text=todo_text)
+        todo = Todo.objects.create(todo_text=todo_text, author=request.user)
+        
+        context = {
+            "id": todo.id, 
+            "todo_text": todo.todo_text, 
+            "username": todo.author.username
+        }
         
     # JSON 응답
-    return JsonResponse({"id": todo.id, "todo_text": todo.todo_text}, status=200)
+    return JsonResponse(context, status=200)
 
 # 할일 보기, /todo/<todo_id>/
+@login_required
 def todoDetail(request, todo_id):
     todo = get_object_or_404(Todo, pk=todo_id)
     context = {
@@ -38,6 +49,7 @@ def todoDetail(request, todo_id):
     return render(request, "todo/detail.html", context)
 
 # 할일 수정, /todo/<todo_id>/update/
+@login_required
 def todoUpdate(request, todo_id):
     if request.method == "POST":
         # 받은 값
@@ -55,6 +67,7 @@ def todoUpdate(request, todo_id):
     return JsonResponse({"id": todo.id, "todo_text": todo.todo_text}, status=200)
 
 # 할일 삭제, /todo/<todo_id>/delete/
+@login_required
 def todoDelete(request, todo_id):
     if request.method == "POST":
         # 기존 할일 정보
@@ -67,6 +80,7 @@ def todoDelete(request, todo_id):
     return JsonResponse({}, status=200)
 
 # 상세 항목 등록, /todo/<todo_id>/create/
+@login_required
 def itemCreate(request, todo_id):
     if request.method == "POST":
         # 받은 값
@@ -80,6 +94,7 @@ def itemCreate(request, todo_id):
     return JsonResponse({"id": item.id, "item_text": item.item_text}, status=200)
 
 # 상세 항목 수정, /todo/<todo_id>/<item_id>/update/ 
+@login_required
 def itemUpdate(request, todo_id, item_id):
     if request.method == "POST":
         # 받은 값
@@ -97,6 +112,7 @@ def itemUpdate(request, todo_id, item_id):
     return JsonResponse({"id": item.id, "item_text": item.item_text}, status=200)
 
 # 상세 항목 삭제, /todo/<todo_id>/<item_id>/delete/
+@login_required
 def itemDelete(request, todo_id, item_id):
     if request.method == "POST":
         # 기존 상세 항목 정보
