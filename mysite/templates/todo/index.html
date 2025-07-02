@@ -23,7 +23,7 @@
         <!-- 할일 목록 -->
         {% if todoList %}
             {% for todo in todoList %}
-                {% if todo.hidden == 'N' %}
+                {% if not todo.hidden %}
                 <li class="list-group-item" id="li{{ todo.id }}">
                     <div class="d-flex">
                         <div class="me-auto">
@@ -87,7 +87,7 @@
 
     // 숨기기/보이기
     function hiddenConfirm(id) {
-        let todo_hidden = $('.hidden-button-' + id).text() == '숨기기' ? 'N' : 'Y';
+        let todo_hidden = $('.hidden-button-' + id).text() == '숨기기' ? 'Y' : 'N';
 
         let data = JSON.stringify({
             'todo_hidden': todo_hidden,
@@ -101,8 +101,9 @@
             contentType: 'application/json',
             data: data,
             success: function (response) {
-                if (todo_hidden == 'N') {
-                    $('.hidden-button-' + id).removeClass('btn-danger').addClass('btn-primary').text('보이기');
+                if (todo_hidden == 'Y') {
+                    // 할일을 숨겼으므로 화면에서 제거
+                    $('#li' + id).remove();
                 } else {
                     $('.hidden-button-' + id).removeClass('btn-primary').addClass('btn-danger').text('숨기기');
                 }

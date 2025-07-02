@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 class Todo(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     todo_text = models.CharField(max_length=200)
-    hidden = models.CharField(max_length=1, default='N')
+    hidden = models.BooleanField(default=False)
     
 
 # 상세 항목
